@@ -55,13 +55,24 @@ export default async function PresetsPage() {
                 >
                   {p.thumbnailUrl && (
                     <div className="aspect-[16/9] overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element -- public bucket URLs */}
-                      <img
-                        src={p.thumbnailUrl}
-                        alt={`${p.name} example`}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                      />
+                      {p.thumbnailUrl.endsWith(".mp4") ? (
+                        <video
+                          src={p.thumbnailUrl}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element -- public bucket URLs
+                        <img
+                          src={p.thumbnailUrl}
+                          alt={`${p.name} example`}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        />
+                      )}
                     </div>
                   )}
                   <div className="p-4">

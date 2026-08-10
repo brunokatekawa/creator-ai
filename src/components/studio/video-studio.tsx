@@ -255,15 +255,25 @@ export function VideoStudio({
                       : "opacity-80 hover:opacity-100"
                   }`}
                 >
-                  {p.thumbnailUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element -- public bucket URLs
-                    <img
-                      src={p.thumbnailUrl}
-                      alt={p.name}
-                      loading="lazy"
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  )}
+                  {p.thumbnailUrl &&
+                    (p.thumbnailUrl.endsWith(".mp4") ? (
+                      <video
+                        src={p.thumbnailUrl}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element -- public bucket URLs
+                      <img
+                        src={p.thumbnailUrl}
+                        alt={p.name}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    ))}
                   <span className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 text-[10px] font-medium leading-tight text-white">
                     {p.name}
                   </span>
