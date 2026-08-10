@@ -48,9 +48,9 @@ export default async function PresetsPage() {
               return (
                 <Link
                   key={p.id}
-                  href={
+                  href={`${
                     p.modality === "text_to_image" ? "/studio/image" : "/studio/video"
-                  }
+                  }?preset=${p.slug}`}
                   className="group rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 transition hover:border-violet-500/50 hover:bg-zinc-900"
                 >
                   <div className="flex items-baseline justify-between">

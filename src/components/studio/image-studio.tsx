@@ -55,16 +55,18 @@ export function ImageStudio({
   presets,
   initialJobs,
   userId,
+  initialPresetId = null,
 }: {
   models: StudioModel[];
   presets: StudioPreset[];
   initialJobs: StudioJob[];
   userId: string;
+  initialPresetId?: string | null;
 }) {
   const router = useRouter();
   const [prompt, setPrompt] = useState("");
   const [modelId, setModelId] = useState(models[0]?.id ?? "");
-  const [presetId, setPresetId] = useState<string | null>(null);
+  const [presetId, setPresetId] = useState<string | null>(initialPresetId);
   const [imageSize, setImageSize] = useState("square_hd");
   const [numImages, setNumImages] = useState(1);
   const [submitting, setSubmitting] = useState(false);

@@ -12,7 +12,12 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function ImageStudioPage() {
+export default async function ImageStudioPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ preset?: string }>;
+}) {
+  const { preset: presetSlug } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -83,7 +88,16 @@ export default async function ImageStudioPage() {
       .filter((o) => o.url),
   }));
 
+  const initialPresetId =
+    presets.find((p) => p.slug === presetSlug)?.id ?? null;
+
   return (
-    <ImageStudio models={models} presets={presets} initialJobs={jobs} userId={user.id} />
+    <ImageStudio
+      models={models}
+      presets={presets}
+      initialJobs={jobs}
+      userId={user.id}
+      initialPresetId={initialPresetId}
+    />
   );
 }
