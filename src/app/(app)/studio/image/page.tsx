@@ -74,6 +74,7 @@ export default async function ImageStudioPage({
     name: p.name,
     modelId: p.modelId,
     promptTemplate: p.promptTemplate,
+    thumbnailUrl: p.thumbnailUrl,
   }));
 
   const jobs: StudioJob[] = jobRows.map((j) => ({

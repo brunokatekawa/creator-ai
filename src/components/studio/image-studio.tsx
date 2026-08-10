@@ -16,6 +16,7 @@ export interface StudioPreset {
   name: string;
   modelId: string;
   promptTemplate: string;
+  thumbnailUrl: string | null;
 }
 
 export interface StudioJob {
@@ -208,6 +209,15 @@ export function ImageStudio({
                     : "opacity-80 hover:opacity-100"
                 }`}
               >
+                {p.thumbnailUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element -- public bucket URLs, no optimization needed at 100px
+                  <img
+                    src={p.thumbnailUrl}
+                    alt={p.name}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                )}
                 <span className="absolute inset-x-0 bottom-0 bg-black/50 px-1.5 py-1 text-[11px] font-medium leading-tight text-white">
                   {p.name}
                 </span>

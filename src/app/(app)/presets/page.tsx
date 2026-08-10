@@ -51,17 +51,30 @@ export default async function PresetsPage() {
                   href={`${
                     p.modality === "text_to_image" ? "/studio/image" : "/studio/video"
                   }?preset=${p.slug}`}
-                  className="group rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 transition hover:border-violet-500/50 hover:bg-zinc-900"
+                  className="group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 transition hover:border-violet-500/50 hover:bg-zinc-900"
                 >
-                  <div className="flex items-baseline justify-between">
-                    <span className="font-medium text-white">{p.name}</span>
-                    <span className="text-xs text-zinc-500">
-                      {model?.displayName} · {cost}cr
-                    </span>
+                  {p.thumbnailUrl && (
+                    <div className="aspect-[16/9] overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- public bucket URLs */}
+                      <img
+                        src={p.thumbnailUrl}
+                        alt={`${p.name} example`}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-medium text-white">{p.name}</span>
+                      <span className="text-xs text-zinc-500">
+                        {model?.displayName} · {cost}cr
+                      </span>
+                    </div>
+                    <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-zinc-500">
+                      {p.promptTemplate.replace("{subject}", "…")}
+                    </p>
                   </div>
-                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-zinc-500">
-                    {p.promptTemplate.replace("{subject}", "…")}
-                  </p>
                 </Link>
               );
             })}
