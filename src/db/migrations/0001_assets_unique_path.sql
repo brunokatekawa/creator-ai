@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "assets_storage_path_idx" ON "assets" USING btree ("storage_path");
