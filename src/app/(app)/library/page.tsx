@@ -84,25 +84,32 @@ export default async function LibraryPage({
             const url = signed.get(asset.storagePath);
             if (!url) return null;
             return (
-              <a
+              <div
                 key={asset.id}
-                href={url}
-                target="_blank"
-                rel="noreferrer"
-                className="group relative block aspect-square overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900"
+                className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900"
               >
-                {asset.kind === "video" ? (
-                  <video src={url} muted loop playsInline preload="metadata"
-                    className="h-full w-full object-cover" />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element -- signed URLs are short-lived
-                  <img src={url} alt={promptByGeneration.get(asset.generationId) ?? ""}
-                    className="h-full w-full object-cover transition group-hover:scale-105" />
+                <a href={url} target="_blank" rel="noreferrer" className="block h-full w-full">
+                  {asset.kind === "video" ? (
+                    <video src={url} muted loop playsInline preload="metadata"
+                      className="h-full w-full object-cover" />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element -- signed URLs are short-lived
+                    <img src={url} alt={promptByGeneration.get(asset.generationId) ?? ""}
+                      className="h-full w-full object-cover transition group-hover:scale-105" />
+                  )}
+                </a>
+                {asset.kind === "image" && (
+                  <Link
+                    href={`/studio/video?source=${asset.id}`}
+                    className="absolute right-2 top-2 rounded-lg bg-violet-600/90 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 transition hover:bg-violet-500 group-hover:opacity-100"
+                  >
+                    Animate →
+                  </Link>
                 )}
-                <span className="absolute inset-x-0 bottom-0 truncate bg-black/60 px-2 py-1 text-[11px] text-zinc-200 opacity-0 transition group-hover:opacity-100">
+                <span className="pointer-events-none absolute inset-x-0 bottom-0 truncate bg-black/60 px-2 py-1 text-[11px] text-zinc-200 opacity-0 transition group-hover:opacity-100">
                   {promptByGeneration.get(asset.generationId)}
                 </span>
-              </a>
+              </div>
             );
           })}
         </div>

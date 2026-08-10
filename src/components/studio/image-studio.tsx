@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useGenerationUpdates } from "@/lib/use-generation-updates";
 
 export interface StudioModel {
   id: string;
@@ -72,8 +72,8 @@ export function ImageStudio({
   const [numImages, setNumImages] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Refresh throttle: realtime can fire several updates per job
-  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useGenerationUpdates(userId, "image-studio-jobs");
 
   const activePreset = presets.find((p) => p.id === presetId) ?? null;
   const effectiveModelId = activePreset?.modelId ?? modelId;
@@ -85,50 +85,6 @@ export function ImageStudio({
       return model.costConfig.credits * Math.min(Math.max(numImages, 1), 4);
     return model.costConfig.credits;
   }, [model, numImages]);
-
-  const scheduleRefresh = useCallback(() => {
-    if (refreshTimer.current) clearTimeout(refreshTimer.current);
-    refreshTimer.current = setTimeout(() => router.refresh(), 400);
-  }, [router]);
-
-  // Live job updates: RLS scopes the subscription to this user's rows.
-  // The realtime socket must carry the user JWT *before* the channel joins —
-  // with only the publishable key the connection is anonymous and RLS
-  // silently filters out every event.
-  useEffect(() => {
-    const supabase = createClient();
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-    let cancelled = false;
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (cancelled) return;
-      if (session) supabase.realtime.setAuth(session.access_token);
-      channel = supabase
-        .channel("studio-jobs")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "generations",
-            filter: `user_id=eq.${userId}`,
-          },
-          scheduleRefresh,
-        )
-        .subscribe();
-    });
-
-    const { data: authSub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) supabase.realtime.setAuth(session.access_token);
-    });
-
-    return () => {
-      cancelled = true;
-      if (channel) supabase.removeChannel(channel);
-      authSub.subscription.unsubscribe();
-      if (refreshTimer.current) clearTimeout(refreshTimer.current);
-    };
-  }, [userId, scheduleRefresh]);
 
   async function submit() {
     if (!prompt.trim() || !model || submitting) return;
