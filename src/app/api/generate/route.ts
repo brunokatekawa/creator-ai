@@ -18,6 +18,48 @@ const BodySchema = z.object({
 
 const RATE_LIMIT_PER_MINUTE = 6;
 
+/**
+ * Keep only params the model's registry row actually declares, and only
+ * enum-valued choices it actually allows. Prevents a client from smuggling
+ * in a provider param (e.g. gpt-image-2's `quality`) that would push real
+ * cost above what we billed in credits — `estimateCost` only ever sees
+ * params that survive this filter. Two schema shapes exist in the registry
+ * (bare array vs `{ enum: [...] }`); both are treated as an allow-list.
+ */
+function sanitizeParams(
+  schema: Record<string, unknown>,
+  params: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(params)) {
+    const rule = schema[key];
+    if (rule === undefined) continue; // not a declared param — drop
+
+    const enumList = Array.isArray(rule)
+      ? rule
+      : Array.isArray((rule as { enum?: unknown[] })?.enum)
+        ? (rule as { enum: unknown[] }).enum
+        : null;
+    if (enumList) {
+      if (enumList.includes(value)) out[key] = value;
+      continue;
+    }
+
+    const range = rule as { min?: number; max?: number };
+    if (typeof range?.min === "number" || typeof range?.max === "number") {
+      const n = Number(value);
+      if (!Number.isFinite(n)) continue;
+      const lo = range.min ?? -Infinity;
+      const hi = range.max ?? Infinity;
+      out[key] = Math.min(Math.max(n, lo), hi);
+      continue;
+    }
+
+    out[key] = value; // unrecognized rule shape — pass through
+  }
+  return out;
+}
+
 export async function POST(request: Request) {
   // ---- auth ----
   const supabase = await createClient();
@@ -122,6 +164,13 @@ export async function POST(request: Request) {
     if (!signed) return NextResponse.json({ error: "could not sign source asset" }, { status: 500 });
     sourceImageUrl = signed.signedUrl;
   }
+
+  // ---- strip any param the model doesn't declare, or an enum value it
+  // doesn't allow, before cost is estimated from it ----
+  mergedParams = sanitizeParams(
+    model.paramsSchema as Record<string, unknown>,
+    mergedParams,
+  );
 
   // ---- cost: always computed server-side from the registry ----
   const adapter = getAdapter(model.provider);

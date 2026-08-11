@@ -66,6 +66,7 @@ export default async function ImageStudioPage({
     id: m.id,
     displayName: m.displayName,
     costConfig: m.costConfig as StudioModel["costConfig"],
+    paramsSchema: m.paramsSchema as StudioModel["paramsSchema"],
   }));
 
   const presets: StudioPreset[] = presetRows.map((p) => ({

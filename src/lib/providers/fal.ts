@@ -129,6 +129,13 @@ export const falAdapter: ModelAdapter = {
     if (input.loraUrl) {
       payload.loras = [{ path: input.loraUrl, scale: 1 }];
     }
+    // GPT Image 2's price swings ~4x across quality tiers ($0.05 medium vs
+    // $0.21 high). We only ever charge the "medium" rate, so quality is
+    // fixed here — never taken from input.params — no request can reach a
+    // pricier tier than what was billed.
+    if (input.model.providerSlug === "openai/gpt-image-2") {
+      payload.quality = "medium";
+    }
 
     const { request_id } = await fal.queue.submit(input.model.providerSlug, {
       input: payload,

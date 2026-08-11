@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGenerationUpdates } from "@/lib/use-generation-updates";
 
@@ -8,6 +8,7 @@ export interface StudioModel {
   id: string;
   displayName: string;
   costConfig: { type: string; credits: number };
+  paramsSchema: Record<string, unknown>;
 }
 
 export interface StudioPreset {
@@ -28,14 +29,23 @@ export interface StudioJob {
   outputs: { assetId: string; url: string }[];
 }
 
-const IMAGE_SIZES = [
-  { value: "square_hd", label: "1:1 HD" },
-  { value: "square", label: "1:1" },
-  { value: "portrait_4_3", label: "3:4" },
-  { value: "portrait_16_9", label: "9:16" },
-  { value: "landscape_4_3", label: "4:3" },
-  { value: "landscape_16_9", label: "16:9" },
-];
+// Friendlier labels for the flux-style image_size enum; aspect_ratio
+// values (nano-banana) are already short and self-explanatory ("16:9").
+const IMAGE_SIZE_LABELS: Record<string, string> = {
+  square_hd: "1:1 HD",
+  square: "1:1",
+  portrait_4_3: "3:4",
+  portrait_16_9: "9:16",
+  landscape_4_3: "4:3",
+  landscape_16_9: "16:9",
+};
+
+/** Which schema key (if any) drives the size/ratio dropdown for this model. */
+function sizeParamKey(schema: Record<string, unknown>): "image_size" | "aspect_ratio" | null {
+  if (Array.isArray(schema.image_size)) return "image_size";
+  if (Array.isArray(schema.aspect_ratio)) return "aspect_ratio";
+  return null;
+}
 
 // Gradient placeholders until presets get real thumbnails
 const PRESET_GRADIENTS: Record<string, string> = {
@@ -68,7 +78,7 @@ export function ImageStudio({
   const [prompt, setPrompt] = useState("");
   const [modelId, setModelId] = useState(models[0]?.id ?? "");
   const [presetId, setPresetId] = useState<string | null>(initialPresetId);
-  const [imageSize, setImageSize] = useState("square_hd");
+  const [imageSize, setImageSize] = useState("");
   const [numImages, setNumImages] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,18 +89,27 @@ export function ImageStudio({
   const effectiveModelId = activePreset?.modelId ?? modelId;
   const model = models.find((m) => m.id === effectiveModelId);
 
-  const cost = useMemo(() => {
-    if (!model) return 0;
-    if (model.costConfig.type === "per_image")
-      return model.costConfig.credits * Math.min(Math.max(numImages, 1), 4);
-    return model.costConfig.credits;
-  }, [model, numImages]);
+  const sizeKey = model ? sizeParamKey(model.paramsSchema) : null;
+  const sizeOptions = sizeKey ? (model!.paramsSchema[sizeKey] as string[]) : [];
+  const showNumImages = Boolean(model?.paramsSchema.num_images);
+  const effectiveImageSize = sizeOptions.includes(imageSize)
+    ? imageSize
+    : (sizeOptions[0] ?? "");
+
+  const cost = !model
+    ? 0
+    : model.costConfig.type === "per_image"
+      ? model.costConfig.credits * Math.min(Math.max(numImages, 1), 4)
+      : model.costConfig.credits;
 
   async function submit() {
     if (!prompt.trim() || !model || submitting) return;
     setSubmitting(true);
     setError(null);
     try {
+      const params: Record<string, unknown> = {};
+      if (sizeKey && effectiveImageSize) params[sizeKey] = effectiveImageSize;
+      if (showNumImages) params.num_images = numImages;
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -98,7 +117,7 @@ export function ImageStudio({
           modelId: effectiveModelId,
           prompt: prompt.trim(),
           presetId: presetId ?? undefined,
-          params: { image_size: imageSize, num_images: numImages },
+          params,
           idempotencyKey: crypto.randomUUID(),
         }),
       });
@@ -200,36 +219,44 @@ export function ImageStudio({
           </label>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-zinc-300">Size</span>
-            <select
-              value={imageSize}
-              onChange={(e) => setImageSize(e.target.value)}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
-            >
-              {IMAGE_SIZES.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-zinc-300">Images</span>
-            <select
-              value={numImages}
-              onChange={(e) => setNumImages(Number(e.target.value))}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
-            >
-              {[1, 2, 3, 4].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+        {(sizeKey || showNumImages) && (
+          <div className="grid grid-cols-2 gap-3">
+            {sizeKey && (
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium text-zinc-300">
+                  {sizeKey === "image_size" ? "Size" : "Ratio"}
+                </span>
+                <select
+                  value={effectiveImageSize}
+                  onChange={(e) => setImageSize(e.target.value)}
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                >
+                  {sizeOptions.map((s) => (
+                    <option key={s} value={s}>
+                      {IMAGE_SIZE_LABELS[s] ?? s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {showNumImages && (
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium text-zinc-300">Images</span>
+                <select
+                  value={numImages}
+                  onChange={(e) => setNumImages(Number(e.target.value))}
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                >
+                  {[1, 2, 3, 4].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </div>
+        )}
 
         {error && (
           <p className="rounded-lg border border-red-900/60 bg-red-950/40 px-3 py-2 text-sm text-red-300">
