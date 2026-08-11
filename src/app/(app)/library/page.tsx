@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { db, tables } from "@/db";
 import { createClient } from "@/lib/supabase/server";
 import { signAssetUrls } from "@/lib/assets";
+import { LibraryGrid, type LibraryAsset } from "@/components/library/library-grid";
 
 export const dynamic = "force-dynamic";
 
@@ -40,12 +41,66 @@ export default async function LibraryPage({
   const generationRows = generationIds.length
     ? await db.query.generations.findMany({
         where: inArray(tables.generations.id, generationIds),
-        columns: { id: true, prompt: true },
+        columns: {
+          id: true,
+          prompt: true,
+          resolvedPrompt: true,
+          modelId: true,
+          presetId: true,
+          creditsReserved: true,
+        },
       })
     : [];
-  const promptByGeneration = new Map(generationRows.map((g) => [g.id, g.prompt]));
+  const generationById = new Map(generationRows.map((g) => [g.id, g]));
+
+  const modelIds = [...new Set(generationRows.map((g) => g.modelId))];
+  const presetIds = [
+    ...new Set(generationRows.map((g) => g.presetId).filter((id): id is string => Boolean(id))),
+  ];
+  const [modelRows, presetRows] = await Promise.all([
+    modelIds.length
+      ? db.query.models.findMany({
+          where: inArray(tables.models.id, modelIds),
+          columns: { id: true, displayName: true },
+        })
+      : Promise.resolve([]),
+    presetIds.length
+      ? db.query.presets.findMany({
+          where: inArray(tables.presets.id, presetIds),
+          columns: { id: true, name: true },
+        })
+      : Promise.resolve([]),
+  ]);
+  const modelNameById = new Map(modelRows.map((m) => [m.id, m.displayName]));
+  const presetNameById = new Map(presetRows.map((p) => [p.id, p.name]));
 
   const signed = await signAssetUrls(assets.map((a) => a.storagePath));
+
+  const libraryAssets: LibraryAsset[] = assets
+    .map((asset) => {
+      const url = signed.get(asset.storagePath);
+      const gen = generationById.get(asset.generationId);
+      if (!url || !gen) return null;
+      const item: LibraryAsset = {
+        id: asset.id,
+        generationId: asset.generationId,
+        kind: asset.kind as "image" | "video",
+        url,
+        mimeType: asset.mimeType,
+        width: asset.width,
+        height: asset.height,
+        durationSeconds: asset.durationSeconds,
+        sizeBytes: Number(asset.sizeBytes),
+        createdAt: asset.createdAt.toISOString(),
+        prompt: gen.prompt,
+        resolvedPrompt: gen.resolvedPrompt,
+        modelName: modelNameById.get(gen.modelId) ?? "Unknown model",
+        presetName: gen.presetId ? (presetNameById.get(gen.presetId) ?? null) : null,
+        creditsReserved: gen.creditsReserved,
+      };
+      return item;
+    })
+    .filter((a): a is LibraryAsset => a !== null);
 
   return (
     <div className="p-6">
@@ -68,7 +123,7 @@ export default async function LibraryPage({
         </div>
       </div>
 
-      {assets.length === 0 ? (
+      {libraryAssets.length === 0 ? (
         <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-800">
           <p className="text-sm text-zinc-500">Nothing here yet.</p>
           <Link
@@ -79,40 +134,7 @@ export default async function LibraryPage({
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-          {assets.map((asset) => {
-            const url = signed.get(asset.storagePath);
-            if (!url) return null;
-            return (
-              <div
-                key={asset.id}
-                className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900"
-              >
-                <a href={url} target="_blank" rel="noreferrer" className="block h-full w-full">
-                  {asset.kind === "video" ? (
-                    <video src={url} muted loop playsInline preload="metadata"
-                      className="h-full w-full object-cover" />
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element -- signed URLs are short-lived
-                    <img src={url} alt={promptByGeneration.get(asset.generationId) ?? ""}
-                      className="h-full w-full object-cover transition group-hover:scale-105" />
-                  )}
-                </a>
-                {asset.kind === "image" && (
-                  <Link
-                    href={`/studio/video?source=${asset.id}`}
-                    className="absolute right-2 top-2 rounded-lg bg-violet-600/90 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 transition hover:bg-violet-500 group-hover:opacity-100"
-                  >
-                    Animate →
-                  </Link>
-                )}
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 truncate bg-black/60 px-2 py-1 text-[11px] text-zinc-200 opacity-0 transition group-hover:opacity-100">
-                  {promptByGeneration.get(asset.generationId)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+        <LibraryGrid assets={libraryAssets} />
       )}
     </div>
   );
