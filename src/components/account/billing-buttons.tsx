@@ -64,7 +64,7 @@ export function ManageBillingButton() {
       <button
         onClick={trigger}
         disabled={busy}
-        className="w-full rounded-lg border border-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-900 disabled:opacity-50"
+        className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 px-3 py-2 text-sm font-medium text-white light:text-zinc-900 transition hover:bg-zinc-900 light:hover:bg-zinc-100 disabled:opacity-50"
       >
         {busy ? "…" : "Manage billing"}
       </button>

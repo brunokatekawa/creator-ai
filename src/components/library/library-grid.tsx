@@ -54,7 +54,7 @@ export function LibraryGrid({ assets }: { assets: LibraryAsset[] }) {
           <button
             key={asset.id}
             onClick={() => setSelectedId(asset.id)}
-            className="group relative block aspect-square overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 text-left"
+            className="group relative block aspect-square overflow-hidden rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900 light:bg-white text-left"
           >
             {asset.kind === "video" ? (
               <video
@@ -95,10 +95,11 @@ export function LibraryGrid({ assets }: { assets: LibraryAsset[] }) {
           onClick={() => setSelectedId(null)}
         >
           <div
-            className="flex w-full max-w-5xl overflow-hidden bg-zinc-950 shadow-2xl"
+            className="flex w-full max-w-5xl overflow-hidden bg-zinc-950 light:bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* media */}
+            {/* media viewer stays dark regardless of theme — showing the
+                content, not chrome, same as any photo/video lightbox */}
             <div className="flex min-w-0 flex-1 items-center justify-center bg-black p-4">
               {selected.kind === "video" ? (
                 <video
@@ -120,13 +121,13 @@ export function LibraryGrid({ assets }: { assets: LibraryAsset[] }) {
             </div>
 
             {/* metadata panel */}
-            <div className="flex w-80 shrink-0 flex-col gap-5 overflow-y-auto border-l border-zinc-800 p-5">
+            <div className="flex w-80 shrink-0 flex-col gap-5 overflow-y-auto border-l border-zinc-800 light:border-zinc-200 p-5">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-white">Details</h2>
+                <h2 className="text-sm font-semibold text-white light:text-zinc-900">Details</h2>
                 <button
                   onClick={() => setSelectedId(null)}
                   aria-label="Close"
-                  className="rounded-md p-1 text-zinc-500 transition hover:bg-zinc-900 hover:text-white"
+                  className="rounded-md p-1 text-zinc-500 transition hover:bg-zinc-900 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900"
                 >
                   ✕
                 </button>
@@ -136,7 +137,7 @@ export function LibraryGrid({ assets }: { assets: LibraryAsset[] }) {
                 <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-500">
                   Prompt
                 </span>
-                <p className="text-sm leading-relaxed text-zinc-200">
+                <p className="text-sm leading-relaxed text-zinc-200 light:text-zinc-800">
                   {selected.prompt}
                 </p>
               </div>
@@ -154,22 +155,22 @@ export function LibraryGrid({ assets }: { assets: LibraryAsset[] }) {
 
               <dl className="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
                 <dt className="text-zinc-500">Model</dt>
-                <dd className="text-right text-zinc-200">{selected.modelName}</dd>
+                <dd className="text-right text-zinc-200 light:text-zinc-800">{selected.modelName}</dd>
 
                 {selected.presetName && (
                   <>
                     <dt className="text-zinc-500">Preset</dt>
-                    <dd className="text-right text-zinc-200">{selected.presetName}</dd>
+                    <dd className="text-right text-zinc-200 light:text-zinc-800">{selected.presetName}</dd>
                   </>
                 )}
 
                 <dt className="text-zinc-500">Type</dt>
-                <dd className="text-right capitalize text-zinc-200">{selected.kind}</dd>
+                <dd className="text-right capitalize text-zinc-200 light:text-zinc-800">{selected.kind}</dd>
 
                 {selected.width && selected.height && (
                   <>
                     <dt className="text-zinc-500">Dimensions</dt>
-                    <dd className="text-right text-zinc-200">
+                    <dd className="text-right text-zinc-200 light:text-zinc-800">
                       {selected.width} × {selected.height}
                     </dd>
                   </>
@@ -178,30 +179,30 @@ export function LibraryGrid({ assets }: { assets: LibraryAsset[] }) {
                 {selected.durationSeconds && (
                   <>
                     <dt className="text-zinc-500">Duration</dt>
-                    <dd className="text-right text-zinc-200">
+                    <dd className="text-right text-zinc-200 light:text-zinc-800">
                       {selected.durationSeconds}s
                     </dd>
                   </>
                 )}
 
                 <dt className="text-zinc-500">File size</dt>
-                <dd className="text-right text-zinc-200">
+                <dd className="text-right text-zinc-200 light:text-zinc-800">
                   {formatBytes(selected.sizeBytes)}
                 </dd>
 
                 <dt className="text-zinc-500">Cost</dt>
-                <dd className="text-right text-zinc-200">
+                <dd className="text-right text-zinc-200 light:text-zinc-800">
                   {selected.creditsReserved} credit
                   {selected.creditsReserved === 1 ? "" : "s"}
                 </dd>
 
                 <dt className="text-zinc-500">Created</dt>
-                <dd className="text-right text-zinc-200">
+                <dd className="text-right text-zinc-200 light:text-zinc-800">
                   {formatDate(selected.createdAt)}
                 </dd>
               </dl>
 
-              <div className="mt-auto flex flex-col gap-2 border-t border-zinc-800 pt-4">
+              <div className="mt-auto flex flex-col gap-2 border-t border-zinc-800 light:border-zinc-200 pt-4">
                 {selected.kind === "image" && (
                   <Link
                     href={`/studio/video?source=${selected.id}`}
@@ -214,7 +215,7 @@ export function LibraryGrid({ assets }: { assets: LibraryAsset[] }) {
                   href={selected.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg border border-zinc-800 px-3 py-2 text-center text-sm text-zinc-300 transition hover:bg-zinc-900 hover:text-white"
+                  className="rounded-lg border border-zinc-800 light:border-zinc-300 px-3 py-2 text-center text-sm text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-900 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900"
                 >
                   Open original
                 </a>

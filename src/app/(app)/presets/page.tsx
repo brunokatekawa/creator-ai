@@ -49,21 +49,21 @@ export default async function PresetsPage({
     <div className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-white">Presets</h1>
-          <p className="mt-1 text-sm text-zinc-400">
+          <h1 className="text-xl font-semibold text-white light:text-zinc-900">Presets</h1>
+          <p className="mt-1 text-sm text-zinc-400 light:text-zinc-600">
             One-tap looks, curated per model. Pick one in the studio and just
             describe the subject.
           </p>
         </div>
-        <div className="flex gap-1 rounded-lg border border-zinc-800 p-1">
+        <div className="flex gap-1 rounded-lg border border-zinc-800 light:border-zinc-200 p-1">
           {categories.map((c) => (
             <Link
               key={c}
               href={`/presets?tab=${c}`}
               className={`rounded-md px-4 py-1.5 text-sm transition ${
                 activeTab === c
-                  ? "bg-zinc-800 text-white"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-zinc-800 light:bg-zinc-200 text-white light:text-zinc-900"
+                  : "text-zinc-400 light:text-zinc-500 hover:text-white light:hover:text-zinc-900"
               }`}
             >
               {CATEGORY_LABELS[c] ?? c}
@@ -83,7 +83,7 @@ export default async function PresetsPage({
               href={`${
                 p.modality === "text_to_image" ? "/studio/image" : "/studio/video"
               }?preset=${p.slug}`}
-              className="group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 transition hover:border-violet-500/50 hover:bg-zinc-900"
+              className="group overflow-hidden rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900/50 light:bg-white transition hover:border-violet-500/50 hover:bg-zinc-900 light:hover:bg-zinc-50"
             >
               {p.thumbnailUrl && (
                 <div className="aspect-[16/9] overflow-hidden">
@@ -109,7 +109,7 @@ export default async function PresetsPage({
               )}
               <div className="p-4">
                 <div className="flex items-baseline justify-between">
-                  <span className="font-medium text-white">{p.name}</span>
+                  <span className="font-medium text-white light:text-zinc-900">{p.name}</span>
                   <span className="text-xs text-zinc-500">
                     {model?.displayName} · {cost}cr
                   </span>

@@ -52,29 +52,29 @@ export default async function AccountPage() {
 
   return (
     <div className="mx-auto max-w-3xl p-6">
-      <h1 className="text-xl font-semibold text-white">Account</h1>
+      <h1 className="text-xl font-semibold text-white light:text-zinc-900">Account</h1>
 
       {/* profile */}
-      <section className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
-        <h2 className="mb-4 text-sm font-medium text-zinc-300">Profile</h2>
+      <section className="mt-6 rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-50 p-5">
+        <h2 className="mb-4 text-sm font-medium text-zinc-300 light:text-zinc-700">Profile</h2>
         <div className="mb-4">
           <span className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
             Email
           </span>
-          <p className="text-sm text-zinc-200">{user.email}</p>
+          <p className="text-sm text-zinc-200 light:text-zinc-800">{user.email}</p>
         </div>
         <UsernameForm initialUsername={profile?.username ?? ""} />
       </section>
 
       {/* current plan */}
-      <section className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
-        <h2 className="mb-4 text-sm font-medium text-zinc-300">Current plan</h2>
+      <section className="mt-6 rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-50 p-5">
+        <h2 className="mb-4 text-sm font-medium text-zinc-300 light:text-zinc-700">Current plan</h2>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-lg font-semibold text-white">
+            <p className="text-lg font-semibold text-white light:text-zinc-900">
               {isSubscribed ? profile?.plan : "Free"}
             </p>
-            <p className="mt-1 text-sm text-zinc-400">
+            <p className="mt-1 text-sm text-zinc-400 light:text-zinc-600">
               {profile?.creditBalance ?? 0} credits
               {isSubscribed && profile?.currentPeriodEnd && (
                 <>
@@ -104,7 +104,7 @@ export default async function AccountPage() {
 
       {/* plans */}
       <section className="mt-6">
-        <h2 className="mb-3 text-sm font-medium text-zinc-300">Plans</h2>
+        <h2 className="mb-3 text-sm font-medium text-zinc-300 light:text-zinc-700">Plans</h2>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           {subscriptionPlans.map((plan) => {
             const current = profile?.planId === plan.id && isSubscribed;
@@ -112,18 +112,18 @@ export default async function AccountPage() {
               <div
                 key={plan.id}
                 className={`rounded-xl border p-4 ${
-                  current ? "border-violet-500" : "border-zinc-800"
-                } bg-zinc-900/40`}
+                  current ? "border-violet-500" : "border-zinc-800 light:border-zinc-200"
+                } bg-zinc-900/40 light:bg-zinc-50`}
               >
-                <p className="font-medium text-white">{plan.name}</p>
-                <p className="mt-1 text-2xl font-semibold text-white">
+                <p className="font-medium text-white light:text-zinc-900">{plan.name}</p>
+                <p className="mt-1 text-2xl font-semibold text-white light:text-zinc-900">
                   {formatCents(plan.priceUsdCents)}
                   <span className="text-sm font-normal text-zinc-500">/mo</span>
                 </p>
-                <p className="mt-1 text-sm text-zinc-400">{plan.credits} credits/mo</p>
+                <p className="mt-1 text-sm text-zinc-400 light:text-zinc-600">{plan.credits} credits/mo</p>
                 <div className="mt-4">
                   {current ? (
-                    <span className="block rounded-lg border border-zinc-800 px-3 py-2 text-center text-sm text-zinc-500">
+                    <span className="block rounded-lg border border-zinc-800 light:border-zinc-200 px-3 py-2 text-center text-sm text-zinc-500">
                       Current plan
                     </span>
                   ) : (
@@ -139,15 +139,15 @@ export default async function AccountPage() {
       {/* credit packs */}
       {creditPacks.length > 0 && (
         <section className="mt-6">
-          <h2 className="mb-3 text-sm font-medium text-zinc-300">Credit top-ups</h2>
+          <h2 className="mb-3 text-sm font-medium text-zinc-300 light:text-zinc-700">Credit top-ups</h2>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             {creditPacks.map((pack) => (
-              <div key={pack.id} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
-                <p className="font-medium text-white">{pack.name}</p>
-                <p className="mt-1 text-2xl font-semibold text-white">
+              <div key={pack.id} className="rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-50 p-4">
+                <p className="font-medium text-white light:text-zinc-900">{pack.name}</p>
+                <p className="mt-1 text-2xl font-semibold text-white light:text-zinc-900">
                   {formatCents(pack.priceUsdCents)}
                 </p>
-                <p className="mt-1 text-sm text-zinc-400">one-time, no expiry</p>
+                <p className="mt-1 text-sm text-zinc-400 light:text-zinc-600">one-time, no expiry</p>
                 <div className="mt-4">
                   <SubscribeButton planId={pack.id} label="Buy" />
                 </div>
@@ -158,23 +158,23 @@ export default async function AccountPage() {
       )}
 
       {/* activity */}
-      <section className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
-        <h2 className="mb-4 text-sm font-medium text-zinc-300">Recent activity</h2>
+      <section className="mt-6 rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-50 p-5">
+        <h2 className="mb-4 text-sm font-medium text-zinc-300 light:text-zinc-700">Recent activity</h2>
         {activity.length === 0 ? (
           <p className="text-sm text-zinc-500">No activity yet.</p>
         ) : (
-          <ul className="divide-y divide-zinc-800/60">
+          <ul className="divide-y divide-zinc-800/60 light:divide-zinc-200">
             {activity.map((tx) => (
               <li key={tx.id} className="flex items-center justify-between py-2 text-sm">
                 <div>
-                  <span className="text-zinc-200">
+                  <span className="text-zinc-200 light:text-zinc-800">
                     {TX_LABELS[tx.kind] ?? tx.kind}
                     {tx.note ? ` — ${tx.note}` : ""}
                   </span>
                   <p className="text-xs text-zinc-500">{formatDate(tx.createdAt)}</p>
                 </div>
                 <span
-                  className={tx.delta >= 0 ? "text-emerald-400" : "text-zinc-400"}
+                  className={tx.delta >= 0 ? "text-emerald-400" : "text-zinc-400 light:text-zinc-600"}
                 >
                   {tx.delta > 0 ? "+" : ""}
                   {tx.delta}

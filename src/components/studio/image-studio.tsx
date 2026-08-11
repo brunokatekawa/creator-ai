@@ -136,8 +136,8 @@ export function ImageStudio({
       {/* ---- left: controls ---- */}
       <div className="flex w-full shrink-0 flex-col gap-5 lg:w-96">
         <div>
-          <h1 className="text-xl font-semibold text-white">Image Studio</h1>
-          <p className="mt-1 text-sm text-zinc-400">
+          <h1 className="text-xl font-semibold text-white light:text-zinc-900">Image Studio</h1>
+          <p className="mt-1 text-sm text-zinc-400 light:text-zinc-600">
             Describe the subject; a preset handles the look.
           </p>
         </div>
@@ -154,17 +154,17 @@ export function ImageStudio({
               : "Describe the full image…"
           }
           rows={4}
-          className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-sm text-white placeholder:text-zinc-500 focus:border-violet-500 focus:outline-none"
+          className="w-full resize-none rounded-xl border border-zinc-800 light:border-zinc-300 bg-zinc-900/60 light:bg-white p-3 text-sm text-white light:text-zinc-900 placeholder:text-zinc-500 focus:border-violet-500 focus:outline-none"
         />
 
         {/* preset grid */}
         <div>
           <div className="mb-2 flex items-baseline justify-between">
-            <span className="text-sm font-medium text-zinc-300">Style preset</span>
+            <span className="text-sm font-medium text-zinc-300 light:text-zinc-700">Style preset</span>
             {activePreset && (
               <button
                 onClick={() => setPresetId(null)}
-                className="text-xs text-zinc-500 hover:text-zinc-300"
+                className="text-xs text-zinc-500 hover:text-zinc-300 light:hover:text-zinc-700"
               >
                 clear
               </button>
@@ -180,7 +180,7 @@ export function ImageStudio({
                   PRESET_GRADIENTS[p.slug] ?? "from-zinc-700 to-zinc-900"
                 } ${
                   p.id === presetId
-                    ? "ring-2 ring-violet-400 ring-offset-2 ring-offset-zinc-950"
+                    ? "ring-2 ring-violet-400 ring-offset-2 ring-offset-zinc-950 light:ring-offset-white"
                     : "opacity-80 hover:opacity-100"
                 }`}
               >
@@ -204,11 +204,11 @@ export function ImageStudio({
         {/* model picker — hidden when a preset pins the model */}
         {!activePreset && (
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-zinc-300">Model</span>
+            <span className="mb-1.5 block text-sm font-medium text-zinc-300 light:text-zinc-700">Model</span>
             <select
               value={modelId}
               onChange={(e) => setModelId(e.target.value)}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+              className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900/60 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 focus:border-violet-500 focus:outline-none"
             >
               {models.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -223,13 +223,13 @@ export function ImageStudio({
           <div className="grid grid-cols-2 gap-3">
             {sizeKey && (
               <label className="block">
-                <span className="mb-1.5 block text-sm font-medium text-zinc-300">
+                <span className="mb-1.5 block text-sm font-medium text-zinc-300 light:text-zinc-700">
                   {sizeKey === "image_size" ? "Size" : "Ratio"}
                 </span>
                 <select
                   value={effectiveImageSize}
                   onChange={(e) => setImageSize(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900/60 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 focus:border-violet-500 focus:outline-none"
                 >
                   {sizeOptions.map((s) => (
                     <option key={s} value={s}>
@@ -241,11 +241,11 @@ export function ImageStudio({
             )}
             {showNumImages && (
               <label className="block">
-                <span className="mb-1.5 block text-sm font-medium text-zinc-300">Images</span>
+                <span className="mb-1.5 block text-sm font-medium text-zinc-300 light:text-zinc-700">Images</span>
                 <select
                   value={numImages}
                   onChange={(e) => setNumImages(Number(e.target.value))}
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900/60 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 focus:border-violet-500 focus:outline-none"
                 >
                   {[1, 2, 3, 4].map((n) => (
                     <option key={n} value={n}>
@@ -275,9 +275,9 @@ export function ImageStudio({
 
       {/* ---- right: live jobs ---- */}
       <div className="min-w-0 flex-1">
-        <h2 className="mb-3 text-sm font-medium text-zinc-300">Recent</h2>
+        <h2 className="mb-3 text-sm font-medium text-zinc-300 light:text-zinc-700">Recent</h2>
         {initialJobs.length === 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-zinc-800 text-sm text-zinc-500">
+          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-zinc-800 light:border-zinc-300 text-sm text-zinc-500">
             Your generations will appear here.
           </div>
         ) : (
@@ -302,7 +302,7 @@ function JobCard({ job }: { job: StudioJob }) {
             href={out.url}
             target="_blank"
             rel="noreferrer"
-            className="group relative block aspect-square overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900"
+            className="group relative block aspect-square overflow-hidden rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900 light:bg-white"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- signed URLs are short-lived; next/image caching buys nothing */}
             <img
@@ -320,7 +320,7 @@ function JobCard({ job }: { job: StudioJob }) {
   }
 
   return (
-    <div className="flex aspect-square flex-col items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-3">
+    <div className="flex aspect-square flex-col items-center justify-center gap-2 rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900/60 light:bg-zinc-50 p-3">
       {job.status === "failed" ? (
         <>
           <span className="text-xs font-medium text-red-400">failed</span>
@@ -330,8 +330,8 @@ function JobCard({ job }: { job: StudioJob }) {
         </>
       ) : (
         <>
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-400" />
-          <span className="text-xs capitalize text-zinc-400">{job.status}</span>
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 light:border-zinc-300 border-t-violet-400" />
+          <span className="text-xs capitalize text-zinc-400 light:text-zinc-600">{job.status}</span>
           <span className="line-clamp-2 text-center text-[11px] text-zinc-600">
             {job.prompt}
           </span>

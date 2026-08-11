@@ -105,16 +105,16 @@ export default async function LibraryPage({
   return (
     <div className="p-6">
       <div className="mb-5 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-white">Library</h1>
-        <div className="flex gap-1 rounded-lg border border-zinc-800 p-1">
+        <h1 className="text-xl font-semibold text-white light:text-zinc-900">Library</h1>
+        <div className="flex gap-1 rounded-lg border border-zinc-800 light:border-zinc-200 p-1">
           {FILTERS.map((f) => (
             <Link
               key={f.value}
               href={f.value === "all" ? "/library" : `/library?kind=${f.value}`}
               className={`rounded-md px-3 py-1 text-sm transition ${
                 activeFilter === f.value
-                  ? "bg-zinc-800 text-white"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-zinc-800 light:bg-zinc-200 text-white light:text-zinc-900"
+                  : "text-zinc-400 light:text-zinc-500 hover:text-white light:hover:text-zinc-900"
               }`}
             >
               {f.label}
@@ -124,7 +124,7 @@ export default async function LibraryPage({
       </div>
 
       {libraryAssets.length === 0 ? (
-        <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-800">
+        <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-800 light:border-zinc-300">
           <p className="text-sm text-zinc-500">Nothing here yet.</p>
           <Link
             href="/studio/image"

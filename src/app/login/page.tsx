@@ -64,12 +64,12 @@ function LoginForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
+    <main className="flex min-h-screen items-center justify-center bg-zinc-950 light:bg-white px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-semibold text-white">
+        <h1 className="mb-1 text-center text-2xl font-semibold text-white light:text-zinc-900">
           Creator<span className="text-violet-400">AI</span>
         </h1>
-        <p className="mb-8 text-center text-sm text-zinc-400">
+        <p className="mb-8 text-center text-sm text-zinc-400 light:text-zinc-600">
           {mode === "signin" ? "Welcome back" : "Create your account — 100 free credits"}
         </p>
 
@@ -77,7 +77,7 @@ function LoginForm() {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={busy}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900 light:bg-white py-2 text-sm font-medium text-white light:text-zinc-900 transition hover:bg-zinc-800 light:hover:bg-zinc-100 disabled:opacity-50"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
             <path
@@ -101,9 +101,9 @@ function LoginForm() {
         </button>
 
         <div className="my-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-zinc-800" />
+          <div className="h-px flex-1 bg-zinc-800 light:bg-zinc-200" />
           <span className="text-xs text-zinc-500">or</span>
-          <div className="h-px flex-1 bg-zinc-800" />
+          <div className="h-px flex-1 bg-zinc-800 light:bg-zinc-200" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -113,7 +113,7 @@ function LoginForm() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-violet-500"
+            className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 placeholder-zinc-500 outline-none focus:border-violet-500"
           />
           <input
             type="password"
@@ -122,7 +122,7 @@ function LoginForm() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-violet-500"
+            className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 placeholder-zinc-500 outline-none focus:border-violet-500"
           />
           <button
             type="submit"
@@ -138,7 +138,7 @@ function LoginForm() {
 
         <button
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-6 w-full text-center text-sm text-zinc-400 hover:text-white"
+          className="mt-6 w-full text-center text-sm text-zinc-400 light:text-zinc-600 hover:text-white light:hover:text-zinc-900"
         >
           {mode === "signin"
             ? "No account? Sign up"

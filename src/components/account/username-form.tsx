@@ -47,13 +47,13 @@ export function UsernameForm({ initialUsername }: { initialUsername: string }) {
             setSaved(false);
           }}
           placeholder="Not set"
-          className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:border-violet-500"
+          className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 placeholder-zinc-500 outline-none focus:border-violet-500"
         />
       </label>
       <button
         type="submit"
         disabled={busy || username === initialUsername}
-        className="rounded-lg border border-zinc-800 px-3 py-2 text-sm text-white transition hover:bg-zinc-900 disabled:opacity-40"
+        className="rounded-lg border border-zinc-800 light:border-zinc-300 px-3 py-2 text-sm text-white light:text-zinc-900 transition hover:bg-zinc-900 light:hover:bg-zinc-100 disabled:opacity-40"
       >
         {busy ? "…" : "Save"}
       </button>

@@ -148,8 +148,8 @@ export function VideoStudio({
       {/* ---- left: controls ---- */}
       <div className="flex w-full shrink-0 flex-col gap-5 lg:w-96">
         <div>
-          <h1 className="text-xl font-semibold text-white">Video Studio</h1>
-          <div className="mt-3 flex gap-1 rounded-lg border border-zinc-800 p-1">
+          <h1 className="text-xl font-semibold text-white light:text-zinc-900">Video Studio</h1>
+          <div className="mt-3 flex gap-1 rounded-lg border border-zinc-800 light:border-zinc-200 p-1">
             {(
               [
                 ["image_to_video", "Image to Video"],
@@ -161,8 +161,8 @@ export function VideoStudio({
                 onClick={() => switchTab(value)}
                 className={`flex-1 rounded-md px-3 py-1.5 text-sm transition ${
                   tab === value
-                    ? "bg-zinc-800 text-white"
-                    : "text-zinc-400 hover:text-white"
+                    ? "bg-zinc-800 light:bg-zinc-200 text-white light:text-zinc-900"
+                    : "text-zinc-400 light:text-zinc-500 hover:text-white light:hover:text-zinc-900"
                 }`}
               >
                 {label}
@@ -174,11 +174,11 @@ export function VideoStudio({
         {/* source image picker (i2v only) */}
         {tab === "image_to_video" && (
           <div>
-            <span className="mb-2 block text-sm font-medium text-zinc-300">
+            <span className="mb-2 block text-sm font-medium text-zinc-300 light:text-zinc-700">
               Source image
             </span>
             {sourceImages.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-zinc-800 p-3 text-xs text-zinc-500">
+              <p className="rounded-lg border border-dashed border-zinc-800 light:border-zinc-300 p-3 text-xs text-zinc-500">
                 No images yet — generate one in the Image Studio first.
               </p>
             ) : (
@@ -192,7 +192,7 @@ export function VideoStudio({
                     title={img.prompt}
                     className={`relative aspect-square overflow-hidden rounded-lg transition ${
                       img.id === sourceAssetId
-                        ? "ring-2 ring-violet-400 ring-offset-2 ring-offset-zinc-950"
+                        ? "ring-2 ring-violet-400 ring-offset-2 ring-offset-zinc-950 light:ring-offset-white"
                         : "opacity-70 hover:opacity-100"
                     }`}
                   >
@@ -222,20 +222,20 @@ export function VideoStudio({
               : "Describe the video…"
           }
           rows={3}
-          className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-sm text-white placeholder:text-zinc-500 focus:border-violet-500 focus:outline-none"
+          className="w-full resize-none rounded-xl border border-zinc-800 light:border-zinc-300 bg-zinc-900/60 light:bg-white p-3 text-sm text-white light:text-zinc-900 placeholder:text-zinc-500 focus:border-violet-500 focus:outline-none"
         />
 
         {/* camera preset grid (i2v only) */}
         {tab === "image_to_video" && (
           <div>
             <div className="mb-2 flex items-baseline justify-between">
-              <span className="text-sm font-medium text-zinc-300">
+              <span className="text-sm font-medium text-zinc-300 light:text-zinc-700">
                 Camera move
               </span>
               {activePreset && (
                 <button
                   onClick={() => setPresetId(null)}
-                  className="text-xs text-zinc-500 hover:text-zinc-300"
+                  className="text-xs text-zinc-500 hover:text-zinc-300 light:hover:text-zinc-700"
                 >
                   clear
                 </button>
@@ -251,7 +251,7 @@ export function VideoStudio({
                     PRESET_GRADIENTS[p.slug] ?? "from-zinc-700 to-zinc-900"
                   } ${
                     p.id === presetId
-                      ? "ring-2 ring-violet-400 ring-offset-2 ring-offset-zinc-950"
+                      ? "ring-2 ring-violet-400 ring-offset-2 ring-offset-zinc-950 light:ring-offset-white"
                       : "opacity-80 hover:opacity-100"
                   }`}
                 >
@@ -286,13 +286,13 @@ export function VideoStudio({
         {/* model picker — hidden when a preset pins the model */}
         {!activePreset && tabModels.length > 1 && (
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-zinc-300">
+            <span className="mb-1.5 block text-sm font-medium text-zinc-300 light:text-zinc-700">
               Model
             </span>
             <select
               value={model?.id ?? ""}
               onChange={(e) => setModelId(e.target.value)}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+              className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900/60 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 focus:border-violet-500 focus:outline-none"
             >
               {tabModels.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -308,13 +308,13 @@ export function VideoStudio({
 
         {supportsDuration && (
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-zinc-300">
+            <span className="mb-1.5 block text-sm font-medium text-zinc-300 light:text-zinc-700">
               Duration
             </span>
             <select
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+              className="w-full rounded-lg border border-zinc-800 light:border-zinc-300 bg-zinc-900/60 light:bg-white px-3 py-2 text-sm text-white light:text-zinc-900 focus:border-violet-500 focus:outline-none"
             >
               <option value="5">5 seconds</option>
               <option value="10">10 seconds</option>
@@ -350,9 +350,9 @@ export function VideoStudio({
 
       {/* ---- right: live jobs ---- */}
       <div className="min-w-0 flex-1">
-        <h2 className="mb-3 text-sm font-medium text-zinc-300">Recent</h2>
+        <h2 className="mb-3 text-sm font-medium text-zinc-300 light:text-zinc-700">Recent</h2>
         {initialJobs.length === 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-zinc-800 text-sm text-zinc-500">
+          <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-zinc-800 light:border-zinc-300 text-sm text-zinc-500">
             Your videos will appear here.
           </div>
         ) : (
@@ -374,7 +374,7 @@ function VideoJobCard({ job }: { job: VideoJob }) {
         {job.outputs.map((out) => (
           <div
             key={out.assetId}
-            className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900"
+            className="overflow-hidden rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900 light:bg-white"
           >
             <video
               src={out.url}
@@ -384,7 +384,7 @@ function VideoJobCard({ job }: { job: VideoJob }) {
               preload="metadata"
               className="aspect-video w-full bg-black object-contain"
             />
-            <p className="truncate px-3 py-2 text-xs text-zinc-400">
+            <p className="truncate px-3 py-2 text-xs text-zinc-400 light:text-zinc-600">
               {job.prompt}
             </p>
           </div>
@@ -394,7 +394,7 @@ function VideoJobCard({ job }: { job: VideoJob }) {
   }
 
   return (
-    <div className="flex aspect-video flex-col items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-3">
+    <div className="flex aspect-video flex-col items-center justify-center gap-2 rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-900/60 light:bg-zinc-50 p-3">
       {job.status === "failed" ? (
         <>
           <span className="text-xs font-medium text-red-400">failed</span>
@@ -404,8 +404,8 @@ function VideoJobCard({ job }: { job: VideoJob }) {
         </>
       ) : (
         <>
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-400" />
-          <span className="text-xs capitalize text-zinc-400">{job.status}</span>
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 light:border-zinc-300 border-t-violet-400" />
+          <span className="text-xs capitalize text-zinc-400 light:text-zinc-600">{job.status}</span>
           <span className="line-clamp-2 text-center text-[11px] text-zinc-600">
             {job.prompt}
           </span>
