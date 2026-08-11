@@ -77,7 +77,14 @@ export default async function AccountPage() {
             <p className="mt-1 text-sm text-zinc-400">
               {profile?.creditBalance ?? 0} credits
               {isSubscribed && profile?.currentPeriodEnd && (
-                <> · renews {formatDate(profile.currentPeriodEnd)}</>
+                <>
+                  {" "}
+                  · {profile.cancelAtPeriodEnd ? "cancels" : "renews"}{" "}
+                  {formatDate(profile.currentPeriodEnd)}
+                </>
+              )}
+              {isSubscribed && profile?.cancelAtPeriodEnd && (
+                <span className="ml-2 text-amber-400">won&apos;t renew</span>
               )}
               {profile?.subscriptionStatus === "past_due" && (
                 <span className="ml-2 text-amber-400">payment past due</span>

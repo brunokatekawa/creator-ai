@@ -119,6 +119,8 @@ async function handleEvent(event: Stripe.Event) {
           planId: plan.id,
           plan: plan.name,
           subscriptionStatus: "active",
+          // A renewal charge only happens if the sub wasn't set to lapse.
+          cancelAtPeriodEnd: false,
           currentPeriodEnd: new Date(line.period.end * 1000),
           ...(subscriptionId ? { stripeSubscriptionId: subscriptionId } : {}),
         })
@@ -130,11 +132,17 @@ async function handleEvent(event: Stripe.Event) {
       const sub = event.data.object as Stripe.Subscription;
       const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
       const item = sub.items.data[0];
+      // Stripe portal cancellation defaults to "at period end" — `status`
+      // stays "active" the whole time, so `cancel_at`/`cancel_at_period_end`
+      // is the only signal a currently-active sub won't renew. Different API
+      // versions surface this differently; check both.
+      const cancelAtPeriodEnd = sub.cancel_at_period_end || Boolean(sub.cancel_at);
 
       await db
         .update(tables.profiles)
         .set({
           subscriptionStatus: mapSubscriptionStatus(sub.status),
+          cancelAtPeriodEnd,
           ...(item ? { currentPeriodEnd: new Date(item.current_period_end * 1000) } : {}),
         })
         .where(eq(tables.profiles.stripeCustomerId, customerId));
@@ -149,7 +157,7 @@ async function handleEvent(event: Stripe.Event) {
       // claws back credits already granted.
       await db
         .update(tables.profiles)
-        .set({ subscriptionStatus: "canceled" })
+        .set({ subscriptionStatus: "canceled", cancelAtPeriodEnd: false })
         .where(eq(tables.profiles.stripeCustomerId, customerId));
       break;
     }

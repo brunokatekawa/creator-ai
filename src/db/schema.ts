@@ -92,6 +92,10 @@ export const profiles = pgTable("profiles", {
   stripeSubscriptionId: text("stripe_subscription_id").unique(),
   subscriptionStatus: subscriptionStatusEnum("subscription_status").notNull().default("none"),
   currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+  // Stripe keeps `status: "active"` right up until the period actually ends
+  // after a portal cancellation — this is the only signal that a currently-
+  // active subscription is scheduled to lapse instead of renew.
+  cancelAtPeriodEnd: boolean("cancel_at_period_end").notNull().default(false),
   planId: uuid("plan_id").references(() => plans.id),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

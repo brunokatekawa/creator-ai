@@ -37,6 +37,16 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local agent-skill tooling (per-machine, not app source) — .agents is the
+# real content, the rest are per-tool symlink shims the installer creates
+/.agents
+/.claude/skills
+/.commandcode
+/.factory
+/.hermes
+/.trae
+/skills-lock.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

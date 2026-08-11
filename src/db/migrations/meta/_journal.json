@@ -22,6 +22,13 @@
       "when": 1786479846907,
       "tag": "0002_orange_the_liberteens",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786485212962,
+      "tag": "0003_stiff_robbie_robertson",
+      "breakpoints": true
     }
   ]
 }
