@@ -44,6 +44,35 @@ export const characterStatusEnum = pgEnum("character_status", [
   "failed",
 ]);
 
+export const planKindEnum = pgEnum("plan_kind", ["subscription", "credit_pack"]);
+
+export const subscriptionStatusEnum = pgEnum("subscription_status", [
+  "none",
+  "active",
+  "past_due",
+  "canceled",
+]);
+
+// ---------------------------------------------------------------------------
+// plans — the billing catalog. Same pattern as models/presets: our row +
+// an external provider slug (Stripe's Price id). Adding a plan is a row
+// insert, not a deploy.
+// ---------------------------------------------------------------------------
+
+export const plans = pgTable("plans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // Null until the matching Stripe Price object has been created.
+  stripePriceId: text("stripe_price_id").unique(),
+  name: text("name").notNull(),
+  kind: planKindEnum("kind").notNull(),
+  credits: integer("credits").notNull(),
+  priceUsdCents: integer("price_usd_cents").notNull(),
+  interval: text("interval"), // "month" for subscriptions, null for packs
+  enabled: boolean("enabled").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 // ---------------------------------------------------------------------------
 // profiles — 1:1 with auth.users (Supabase). Created by trigger on signup.
 // ---------------------------------------------------------------------------
@@ -57,6 +86,13 @@ export const profiles = pgTable("profiles", {
   // grant_credits SQL functions — never from app code.
   creditBalance: integer("credit_balance").notNull().default(0),
   plan: text("plan").notNull().default("free"),
+  // Billing — written only by the Stripe webhook (service role). No client
+  // column-grant exists for any of these, same posture as credit_balance.
+  stripeCustomerId: text("stripe_customer_id").unique(),
+  stripeSubscriptionId: text("stripe_subscription_id").unique(),
+  subscriptionStatus: subscriptionStatusEnum("subscription_status").notNull().default("none"),
+  currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+  planId: uuid("plan_id").references(() => plans.id),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -232,3 +268,13 @@ export const characterImages = pgTable(
   },
   (t) => [index("character_images_character_idx").on(t.characterId)],
 );
+
+// ---------------------------------------------------------------------------
+// stripe_events — webhook delivery dedup. Stripe redelivers events; the event
+// id is a natural idempotency key (insert-or-skip, no client access at all).
+// ---------------------------------------------------------------------------
+
+export const stripeEvents = pgTable("stripe_events", {
+  id: text("id").primaryKey(),
+  processedAt: timestamp("processed_at", { withTimezone: true }).notNull().defaultNow(),
+});

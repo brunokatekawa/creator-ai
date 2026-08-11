@@ -15,6 +15,13 @@
       "when": 1786397287300,
       "tag": "0001_assets_unique_path",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786479846907,
+      "tag": "0002_orange_the_liberteens",
+      "breakpoints": true
     }
   ]
 }
