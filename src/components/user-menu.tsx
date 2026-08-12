@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { Settings, Sun, Moon, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const noopSubscribe = () => () => {};
@@ -66,21 +67,32 @@ export function UserMenu({
           <Link
             href="/account"
             onClick={() => setOpen(false)}
-            className="block px-3 py-2 text-sm text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-800 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-800 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900"
           >
+            <Settings className="size-4" />
             Account
           </Link>
           <button
             onClick={() => mounted && setTheme(isDark ? "light" : "dark")}
             disabled={!mounted}
-            className="block w-full px-3 py-2 text-left text-sm text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-800 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900 disabled:opacity-50"
+            className="flex items-center gap-2 w-full px-3 py-2 text-left text-sm text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-800 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900 disabled:opacity-50"
           >
+            {mounted ? (
+              isDark ? (
+                <Sun className="size-4" />
+              ) : (
+                <Moon className="size-4" />
+              )
+            ) : (
+              <Sun className="size-4 opacity-0" />
+            )}
             {mounted ? `Switch to ${isDark ? "light" : "dark"} theme` : "Switch theme"}
           </button>
           <button
             onClick={signOut}
-            className="block w-full px-3 py-2 text-left text-sm text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-800 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900"
+            className="flex items-center gap-2 w-full px-3 py-2 text-left text-sm text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-800 light:hover:bg-zinc-100 hover:text-white light:hover:text-zinc-900"
           >
+            <LogOut className="size-4" />
             Log out
           </button>
         </div>

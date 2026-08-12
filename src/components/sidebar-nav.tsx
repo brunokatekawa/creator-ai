@@ -9,7 +9,6 @@ import {
   Users,
   Sparkles,
   LibraryBig,
-  Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,7 +19,6 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/characters", label: "Characters", icon: Users },
   { href: "/presets", label: "Presets", icon: Sparkles },
   { href: "/library", label: "Library", icon: LibraryBig },
-  { href: "/account", label: "Account", icon: Settings },
 ];
 
 export function SidebarNav() {
