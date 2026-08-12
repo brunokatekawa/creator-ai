@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/user-menu";
 
 const NAV = [
+  { href: "/home", label: "Home" },
   { href: "/studio/image", label: "Image" },
   { href: "/studio/video", label: "Video" },
   { href: "/characters", label: "Characters" },
@@ -31,7 +32,7 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-screen bg-zinc-950 light:bg-white">
       <aside className="flex w-52 shrink-0 flex-col border-r border-zinc-800/60 light:border-zinc-200 px-4 py-5">
-        <Link href="/" className="mb-8 text-lg font-semibold text-white light:text-zinc-900">
+        <Link href="/home" className="mb-8 text-lg font-semibold text-white light:text-zinc-900">
           Creator<span className="text-violet-400">AI</span>
         </Link>
         <nav className="flex flex-col gap-1">

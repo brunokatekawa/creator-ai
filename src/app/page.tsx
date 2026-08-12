@@ -16,10 +16,10 @@ export default async function Home() {
         <div className="flex items-center gap-4 text-sm">
           {user ? (
             <Link
-              href="/studio/image"
+              href="/home"
               className="rounded-lg bg-violet-600 px-4 py-2 font-medium text-white transition hover:bg-violet-500"
             >
-              Open Studio
+              Open App
             </Link>
           ) : (
             <Link

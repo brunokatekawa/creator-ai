@@ -19,7 +19,7 @@ function LoginForm() {
     setError(null);
     setNotice(null);
     const supabase = createClient();
-    const next = searchParams.get("next") ?? "/studio/image";
+    const next = searchParams.get("next") ?? "/home";
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -45,7 +45,7 @@ function LoginForm() {
       if (error) {
         setError(error.message);
       } else {
-        router.push(searchParams.get("next") ?? "/studio/image");
+        router.push(searchParams.get("next") ?? "/home");
         router.refresh();
       }
     } else {
